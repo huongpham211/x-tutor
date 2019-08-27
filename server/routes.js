@@ -9,8 +9,15 @@ import cors from 'cors';
 
 export default function routes(app) {
   app.use(cors(function(req, cb) {
+    var whitelist = ['http://localhost:3000', 'https://x-tutor.herokuapp.com']
     const corsOptions = {
-      origin: "http://localhost:3001",
+      origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+          callback(null, true)
+        } else {
+          callback(new Error('Not allowed by CORS'))
+        }
+      },
       method: "GET, PUT, POST, DELETE, PATCH, OPTIONS",
       credentials: true
     }
