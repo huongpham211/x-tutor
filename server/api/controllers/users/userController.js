@@ -267,17 +267,17 @@ class UserController {
                     /*
                         change time zone to 7
                     */
-                    var d = new Date(req.body.periodeStart);
-                    var offset = (new Date().getTimezoneOffset() / 60) * - 1;
-                    console.log("offset " + offset)
-                    tuiSchedule.periodeStart = new Date(d.getTime() + offset*60*60);
+                    // var d = new Date(req.body.periodeStart);
+                    // var offset = (new Date().getTimezoneOffset() / 60) * - 1;
+                    // console.log("offset " + offset)
+                    // tuiSchedule.periodeStart = new Date(d.getTime() + offset*60*60);
                     /*
                         calculator total fee
                     */
                     tuiSchedule.feePerHour = tutorFound.tutorData.hourlyRate
-                    // console.log('type of feePerHour '+ typeof tuiSchedule.feePerHour)
-                    // console.log('type of hourPerLession '+typeof tuiSchedule.hoursPerLession)
-                    // console.log('type of lessionPerCourse '+typeof tuiSchedule.lessionsPerCourse)
+                    console.log('type of feePerHour '+ typeof tuiSchedule.feePerHour)
+                    console.log('type of hourPerLession '+typeof tuiSchedule.hoursPerLession)
+                    console.log('type of lessionPerCourse '+typeof tuiSchedule.lessionsPerCourse)
                     tuiSchedule.feeTotal = tuiSchedule.feePerHour*tuiSchedule.hoursPerLession*tuiSchedule.lessionsPerCourse
                     /*
                         set senderId & tutorId
@@ -298,8 +298,8 @@ class UserController {
                     tuiSchedule.periodeEnd = '2019-10-10'
                     
                     console.log(tuiSchedule)
-                    return "OK"
-                    // return scheduleService.createNewSchedule(tuiSchedule)
+                    // return "OK"
+                    return scheduleService.createNewSchedule(tuiSchedule)
                 }
             })
             .then(scheduleCreated => {
