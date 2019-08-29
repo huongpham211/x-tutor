@@ -1,7 +1,7 @@
 {
-  "name": "web21-xtutor",
+  "name": "x-tutor",
   "version": "1.0.0",
-  "description": "My cool app",
+  "description": "X Tutor - Where your money become air :)",
   "main": "index.js",
   "scripts": {
     "start": "npm run compile && node dist/index.js",

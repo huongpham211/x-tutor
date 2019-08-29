@@ -5,16 +5,17 @@ import { type } from 'os';
 class AuthMiddleware {
     validateToken(req, res, next) {
         // console.log(req.headers)
-        //fomat of token
-        // Authorization: Bearer <token>
 
+        /** Fomat of token:
+         * Authorization: Bearer <token>
+        */
         const bearerHeader = req.headers['authorization'];
         if(typeof bearerHeader !== "undefined") {
-            //split at the space and get token from array
+            /** split at the space and get token from array*/
             const bearer = bearerHeader.split(' ');
             const bearerToken = bearer[1];
 
-            //set the token
+            /** set the token */
             req.token = bearerToken;
 
             jwt.verify(req.token, config.JWT_SECRET, (err, authData) => {
@@ -24,7 +25,7 @@ class AuthMiddleware {
                         message: 'Failed to authenticate token! Authorization header is corrupted'
                     })
                 } else {
-                    // Let's pass back the decoded token to the request object
+                    /** Let's pass back the decoded token to the request object*/
                     req.decoded = authData; 
                     //console.log(req.decoded)
                     next()

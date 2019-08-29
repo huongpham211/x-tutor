@@ -145,7 +145,7 @@ class UserController {
                 return tutorFound.save()
             }
         })
-        .then(tutorUpdated => {            
+        .then(tutorUpdated => {
             res.status(200).json({success: true, tutorUpdated})
         })
         .catch(err => {
@@ -155,40 +155,39 @@ class UserController {
     }
 
 
-    updateTutorRef(req, res) {
-        console.log('ownerId '+ req.decoded.ownerId)
-        userService
-        .checkTutor(req.decoded.ownerId)
-        .then(tutorFound => {
-            if(!tutorFound) res.status(403).json({success: false, message: 'Access is not allowed!!!'})
-            else {
-                var education = req.body.education
-                education.forEach(element => {
-                    console.log(element)
-                    var tutorEdu =  tutorFound.tutorData.education
-                    tutorEdu.push(element)
-                });
-                return tutorFound.save()
-            }
-        })
-        .then(tutorUpdated =>{
-            res.status(200).json({success: true, message: 'Updated', tutorUpdated})
-        } )
-        .catch(err => {
-            console.log(err)
-            res.status(500).json({err})
-        })
-    }
-
-
     // updateTutorRef(req, res) {
+    //     console.log('ownerId '+ req.decoded.ownerId)
     //     userService
-    //         .checkTutor(req.decoded.ownerId)
+    //     .checkTutor(req.decoded.ownerId)
+    //     .then(tutorFound => {
+    //         if(!tutorFound) res.status(403).json({success: false, message: 'Access is not allowed!!!'})
+    //         else {
+    //             var education = req.body.education
+    //             education.forEach(element => {
+    //                 console.log(element)
+    //                 var tutorEdu =  tutorFound.tutorData.education
+    //                 tutorEdu.push(element)
+    //             });
+    //             return tutorFound.save()
+    //         }
+    //     })
+    //     .then(tutorUpdated =>{
+    //         res.status(200).json({success: true, message: 'Updated', tutorUpdated})
+    //     } )
+    //     .catch(err => {
+    //         console.log(err)
+    //         res.status(500).json({err})
+    //     })
     // }
+
+
+    updateTutorRef(req, res) {
+        userService
+            .checkTutor(req.decoded.ownerId)
+    }
     
 
     deleteTutorRefRow(req, res) {
-
     }
 
 
@@ -244,7 +243,6 @@ class UserController {
             console.log(err)
             res.status(500).json({err})
         })
-
     }
 
 
@@ -264,37 +262,30 @@ class UserController {
                     res.status(401).json({success: false, message: 'Please choose Start Date match for prefer day'})
                 }
                 else{
-                    /*
-                        change time zone to 7
-                    */
+                    /** change time zone to 7*/
+                        
                     // var d = new Date(req.body.periodeStart);
                     // var offset = (new Date().getTimezoneOffset() / 60) * - 1;
                     // console.log("offset " + offset)
                     // tuiSchedule.periodeStart = new Date(d.getTime() + offset*60*60);
-                    /*
-                        calculator total fee
-                    */
+                    /** calculator total fee */
+                        
                     tuiSchedule.feePerHour = tutorFound.tutorData.hourlyRate
                     console.log('type of feePerHour '+ typeof tuiSchedule.feePerHour)
                     console.log('type of hourPerLession '+typeof tuiSchedule.hoursPerLession)
                     console.log('type of lessionPerCourse '+typeof tuiSchedule.lessionsPerCourse)
                     tuiSchedule.feeTotal = tuiSchedule.feePerHour*tuiSchedule.hoursPerLession*tuiSchedule.lessionsPerCourse
-                    /*
-                        set senderId & tutorId
-                    */
+                    /** set senderId & tutorId */
                     tuiSchedule.senderId = req.decoded.ownerId
                     tuiSchedule.tutorId = req.params.id
-                    /*
-                        set courseCode
-                    */
+                    /** set courseCode */
+                        
                     tuiSchedule.courseCode = req.body.academicLevel +'-' + req.decoded.username
-                    /* 
-                        calculator date time
-                    */
+                    /** calculator date time*/
+                        
                     tuiSchedule.hourEnd = req.body.hourStart + req.body.hoursPerLession
-                    /*
-                        set periodeEnd
-                    */
+                    /** set periodeEnd*/
+                        
                     tuiSchedule.periodeEnd = '2019-10-10'
                     
                     console.log(tuiSchedule)

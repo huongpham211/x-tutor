@@ -177,7 +177,7 @@ definitions:
         type: array
         items: 
           type: string
-          enum: [Monday, Tuesday, Wednesday, Thursday, Friday, Satuday, Sunday]
+          enum: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday]
       periodeStart:
         type: string
         format: date
@@ -235,12 +235,12 @@ definitions:
             year:
               type: string
               example: '2019'
-            workedAt:
-              type: string
-              example: Back-end Dev
             experience:
               type: string
               example: Worked at X TUTOR
+            description:
+              type: string
+              example: Back-end Dev
   
   TutorTeachingSubject:
     type: object

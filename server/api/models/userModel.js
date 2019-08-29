@@ -51,8 +51,8 @@ const userModel = new Schema({
         //working experience
         workingExperience: [{
             year: {type: String},
-            workedAt: {type: String},
             experience: {type: String},
+            description: {type: String}
         }],
 
         //teaching subject
