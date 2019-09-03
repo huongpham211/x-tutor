@@ -11,7 +11,8 @@ export default function routes(app) {
   app.use(cors(function(req, cb) {
     // var whitelist = ['https://x-tutor.herokuapp.com','http://localhost:3001']
     const corsOptions = {
-      origin: 'http://localhost:3000',
+      // origin: 'http://localhost:3000',
+        origin: 'https://x-tutor.herokuapp.com',
 
       method: "GET, PUT, POST, DELETE, PATCH, OPTIONS",
       credentials: true

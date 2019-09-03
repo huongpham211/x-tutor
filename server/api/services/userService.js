@@ -15,6 +15,7 @@ class UserService {
                 rolesId: 'Tutor'
             })
     }
+    
 
     getUserById(id){
         return UserModel
@@ -82,10 +83,16 @@ class UserService {
     }
 
 
-    updateTutorRef(ref) {
+    updateTutorDataArray(tutorId, index, obj) {
         return UserModel
-            .findByIdAndUpdate()
+            .update(
+                {_id: id},
+                {$set: {'tutorData.education.$[index]': obj}}
+                )
     }
+
+
+    // createTutorDataArray()
 
 
     deleteTutorRefRow(index) {

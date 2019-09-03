@@ -3,7 +3,7 @@ import Server from './common/server';
 import routes from './routes';
 
 import mongoose from 'mongoose';
-const dbUrl = 'mongodb://admin:admin123456789@ds345587.mlab.com:45587/xtutor';
+const dbUrl = 'mongodb://admin:admin1234@ds251362.mlab.com:51362/x-tutor';
 mongoose.connect(dbUrl,
     {useNewUrlParser: true}, 
     function(err){

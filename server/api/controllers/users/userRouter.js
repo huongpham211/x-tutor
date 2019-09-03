@@ -47,6 +47,6 @@ export default express
     .patch('/:id/tutor-intro', Auth.validateToken, UserController.updateTutorIntro)
     .patch('/:id/tutor-reference', Auth.validateToken, UserController.updateTutorRef)
     .patch('/:id/tutor-working-experience', Auth.validateToken, UserController.updateTutorExp)
-    .patch('/:id/tutor-teaching-subject', UserController.updateTutorCourse)
+    .patch('/:id/tutor-teaching-subject',Auth.validateToken, UserController.updateTutorCourse)
     .post('/:id/tuition-schedules', Auth.validateToken, UserController.createTuitionSchedule)
     .get('/:id/tuition-schedules', UserController.getAllSchedules)

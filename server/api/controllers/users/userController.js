@@ -155,36 +155,46 @@ class UserController {
     }
 
 
-    // updateTutorRef(req, res) {
-    //     console.log('ownerId '+ req.decoded.ownerId)
-    //     userService
-    //     .checkTutor(req.decoded.ownerId)
-    //     .then(tutorFound => {
-    //         if(!tutorFound) res.status(403).json({success: false, message: 'Access is not allowed!!!'})
-    //         else {
-    //             var education = req.body.education
-    //             education.forEach(element => {
-    //                 console.log(element)
-    //                 var tutorEdu =  tutorFound.tutorData.education
-    //                 tutorEdu.push(element)
-    //             });
-    //             return tutorFound.save()
-    //         }
-    //     })
-    //     .then(tutorUpdated =>{
-    //         res.status(200).json({success: true, message: 'Updated', tutorUpdated})
-    //     } )
-    //     .catch(err => {
-    //         console.log(err)
-    //         res.status(500).json({err})
-    //     })
-    // }
-
-
     updateTutorRef(req, res) {
+        console.log('ownerId '+ req.decoded.ownerId)
         userService
-            .checkTutor(req.decoded.ownerId)
+        .checkTutor(req.decoded.ownerId)
+        .then(tutorFound => {
+            if(!tutorFound) res.status(403).json({success: false, message: 'Access is not allowed!!!'})
+            else {
+                var education = req.body.education
+                education.forEach(element => {
+                    console.log(element)
+                    var tutorEdu =  tutorFound.tutorData.education
+                    tutorEdu.push(element)
+                });
+                return tutorFound.save()
+            }
+        })
+        .then(tutorUpdated =>{
+            res.status(200).json({success: true, message: 'Updated', tutorUpdated})
+        } )
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({err})
+        })
     }
+
+
+    // updateTutorRef(req, res) {
+    //     userService
+    //         .checkTutor(req.decoded.ownerId)
+    //         .then(userFound => {
+    //             if(tutorFound) res.status(403).json({success: false, message: 'You are not Tutor!!!'})
+    //             else {
+    //                 var education = req.body.education
+    //                 education.forEach(element => {
+    //                     console.log(element)
+    //                 })
+    //                 return 'Test'
+    //             }
+    //         })
+    // }
     
 
     deleteTutorRefRow(req, res) {
