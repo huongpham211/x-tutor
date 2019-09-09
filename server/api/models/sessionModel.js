@@ -10,9 +10,10 @@ const sessionModel = new Schema({
     rateStar: {type: Number, enum: [0, 1, 2, 3, 4, 5], default: 0},
     comments: [{type: Schema.Types.ObjectId, ref: 'comment'}],
     documents: {type: Array},
-    reportIssue: {type: String, enum: ['Late', 'Absent', 'Left early', 'Technical Dificultly', 'Others']},
+    reportIssue: {type: String, enum: ['Late', 'Absent', 'Left early', 'Technical Dificultly', 'Others'], default: 'Not Reported'},
     reportComment: {Type: String},
-    isReported: {type: Boolean, default: 'false'}
+    isReported: {type: Boolean, default: 'false'},
+    date: {type: Date}
 })
 
 
