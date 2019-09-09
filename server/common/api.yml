@@ -181,9 +181,13 @@ definitions:
       periodeStart:
         type: string
         format: date
-      lessionsPerCourse:
-        type: integer
-        example: 6
+      periodeEnd:
+        type: string
+        format: date
+        example: '2019-11-10'
+      # lessionsPerCourse:
+      #   type: integer
+      #   example: 6
       academicLevel:
         type: string
         example: Beginner
@@ -204,6 +208,27 @@ definitions:
         type: number
         example: 2.5
   
+  TutorFreetime:
+    type: object
+    title: tutorFreeTime
+    properties:
+      periodeStart:
+        type: string
+        format: date
+        description: start date of tutor's free time
+      periodeEnd:
+        type: string
+        format: date
+        description: end date of tutor's free time
+      hourStart:
+        type: number
+        example: 18
+        description: start hour of tutor's free time in a day
+      hourEnd:
+        type: number
+        example: 22
+        description: end hour of tutor's free time in a day
+
   TutorReference:
     type: object
     title: tutorReference
@@ -334,19 +359,6 @@ paths:
           $ref: '#/responses/Unauthorized'
         404:
           $ref: '#/responses/NotFound'
-    # delete:
-    #   tags:
-    #     - Auth
-    #   summary: Sign Out
-    #   parameters:
-    #     - in: header
-    #       name: authorization
-    #       required: true 
-    #       type: string
-    #       description: Bearer <token>'
-    #   responses:
-    #     200:
-    #       description: OK
 
   /auth/register:
     post:
@@ -492,28 +504,6 @@ paths:
           description: user not found
   
   /users/{id}/avatar:
-    # get:
-    #   tags:
-    #     - Users
-    #   description: get profile Picture of user with specified id
-    #   parameters:
-    #     - in: path
-    #       name: id
-    #       type: string
-    #       required: true
-    #       description: UserId
-    #     - in: header
-    #       name: authorization
-    #       required: true 
-    #       type: string
-    #       description: Bearer <token>'
-    #   responses:
-    #     200:
-    #       description: OK
-    #     401:
-    #       $ref: '#/responses/Unauthorized'
-    #     404:
-    #       $ref: '#/responses/NotFound'
     patch:
       tags:
         - Users
@@ -572,6 +562,30 @@ paths:
         404:
           $ref: '#/responses/NotFound'
   
+  /users/{id}/calendar:
+    get:
+      tags:
+        - Users
+      description: fetch to all sessions of the user
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: userId
+        - in: header
+          name: authorization
+          required: true 
+          type: string
+          description: Bearer <token>'
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: '#/responses/Unauthorized'
+        404:
+          $ref: '#/responses/NotFound'
+      
 
   /users/{id}/tutor-intro:
     patch:
@@ -592,6 +606,33 @@ paths:
           name: tutorIntro
           schema:
             $ref: '#/definitions/TutorIntro'
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: '#/responses/Unauthorized'
+        404:
+          $ref: '#/responses/NotFound'
+
+  /users/{id}/tutor-free-time:
+    patch:
+      tags:
+        - Tutor data
+      summary: update the tutor's free time
+      parameters:
+        - in: path
+          name: id
+          type: string
+          description: tutorId
+          required: true 
+        - in: header
+          name: authorization
+          type: string
+          description: Bearer <token>
+        - in: body
+          name: tutorFreeTime
+          schema:
+            $ref: '#/definitions/TutorFreetime'
       responses:
         200:
           description: OK
@@ -1035,8 +1076,6 @@ paths:
           $ref: '#/responses/Unauthorized'
         404:
           $ref: '#/responses/NotFound'
-
-      
    
   /schedules/{id}/sessions:
     get:

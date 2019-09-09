@@ -47,10 +47,10 @@ class UserService {
     }
 
 
-    checkUsername(usernameNeedCheck) {
+    checkUsername(value) {
         return UserModel
             .findOne({
-                username: usernameNeedCheck
+                username: value
             })
     }
 
@@ -83,11 +83,23 @@ class UserService {
     }
 
 
-    updateTutorDataArray(tutorId, index, obj) {
+    // updateFreeTime(id, periodeStart, periodeEnd, hourStart, hourEnd) {
+    //     return UserModel
+    //         .update(
+    //             {_id: id},
+    //             {$set: 
+    //                 {'tutorData.periodeStart': periodeStart,'tutorData.periodeEnd': periodeEnd, 'tutorData.hourStart': hourStart, 'tutorData.hourEnd': hourEnd}
+    //             },
+    //         )
+    // }
+
+
+    updateTutorDataArray(tutorId, obj) {
         return UserModel
             .update(
                 {_id: id},
-                {$set: {'tutorData.education.$[index]': obj}}
+                {$set: {'tutorData.education': obj}},
+                {new: true}
                 )
     }
 

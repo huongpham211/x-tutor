@@ -21,27 +21,11 @@ const scheduleModel = new Schema({
     hoursPerLession: {type: Number, required: true},
     hourStart: {type: Number, required: true},
     hourEnd: {type: Number},
-    tuitionStatus: {type: String, enum: ['Pending', 'In Progress', 'Cancelled', 'Deferred'], default: 'Pending'}
+    tuitionStatus: {type: String, enum: ['Pending', 'In Progress', 'Cancelled', 'Deferred'], default: 'Pending'},
+    sessions: {type: Array}
 }, {
     timestamps: true
 })
-
-
-// scheduleModel.pre('findByIdAndUpdate', function(next){
-//     if(!this.isModified('hourStart')){
-//         return next()
-//     } else {
-//         console.log(this.feeTotal)
-//         //calculator total fee
-//         this.feeTotal = this.feePerHour*this.hoursPerLession*this.lessionsPerCourse
-//         //calculator date time
-//         this.hourEnd = this.hourStart + this.hoursPerLession
-//         //set periodeEnd
-//         this.periodeEnd = '2019-10-10'
-
-//         next()        
-//     }
-// })
 
 
 module.exports = mongoose.model('schedule', scheduleModel);

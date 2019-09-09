@@ -37,9 +37,9 @@ const userModel = new Schema({
     active: {type: Boolean, default: true},
     avatar: {type: String},
 
-    //tutor Infomations
+    /** tutor Infomations */
     tutorData: {
-        //tutor Reference
+        /** tutor Reference*/
         hourlyRate: {type: Number},
         aboutMe: {type: String},
         education: [{
@@ -48,21 +48,27 @@ const userModel = new Schema({
             certificate: {type: String}
         }],
 
-        //working experience
+        /** working experience */
         workingExperience: [{
             year: {type: String},
             experience: {type: String},
             description: {type: String}
         }],
 
-        //teaching subject
+        /** teaching subject*/
         basedIn: {type: String},
         teachingSubject: [{
             course: {type: String},
             feePerHour: {type: Number},
             academicLevel: {type: String, enum: ['Beginner', 'Intensive', 'Advanced']},
             note: {type: String}
-        }]
+        }],
+
+        /** tutor free time */
+        periodeStart: {type: Date},
+        periodeEnd: {type: Date},
+        hourStart: {type: Number},
+        hourEnd: {type: Number}
     }
 },{
     timestamps: true

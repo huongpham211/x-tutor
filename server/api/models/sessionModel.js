@@ -12,7 +12,7 @@ const sessionModel = new Schema({
     documents: {type: Array},
     reportIssue: {type: String, enum: ['Late', 'Absent', 'Left early', 'Technical Dificultly', 'Others']},
     reportComment: {Type: String},
-    reported: {type: Boolean, default: 'false'}
+    isReported: {type: Boolean, default: 'false'}
 })
 
 
