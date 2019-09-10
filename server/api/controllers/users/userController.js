@@ -1,5 +1,6 @@
 import userService from '../../services/userService';
 import scheduleService from '../../services/scheduleService';
+import sessionService from '../../services/sessionService';
 import * as body from 'body-parser';
 import multer from 'multer';
 import * as path from 'path';
@@ -277,7 +278,8 @@ class UserController {
         })
     }
 
-
+    //Add new tuition Schedule here because schedule model need both of tutorId and senderId
+    //after the tuition schedule were created, create new sessions of the tuition schedule
     createTuitionSchedule(req, res) {
         userService
             .checkTutor(req.params.id)
@@ -296,8 +298,8 @@ class UserController {
                 //this is tutor's hourStart
                 var hStart = tutorFound.tutorData.hourStart
                 var hEnd = tutorFound.tutorData.hourEnd
-                console.log('tutor hourStart ' + hStart)
-                console.log('tutor hourEnd ' + hEnd)
+                // console.log('tutor hourStart ' + hStart)
+                // console.log('tutor hourEnd ' + hEnd)
 
                 //these are day in tutor's free time
                 var start = moment(tutorFound.tutorData.periodeStart).format('YYYY-MM-DD');
@@ -319,7 +321,10 @@ class UserController {
                 } else {
                     /** change time zone*/
 
-                    /** calculate: période */
+                    /** calculate: période 
+                     * push the date were matched with sender's preferDay into sessions array of tuition schedule Model
+                     * the sessions array will be used in create sessions
+                    */
                     tuiSchedule.sessions = []
                     for(var m = moment(tuiSchedule.periodeStart); m.isBefore(tuiSchedule.periodeEnd); m.add(1, 'days')) {
                         // console.log(m.format('YYYY-MM-DD'));
@@ -338,9 +343,9 @@ class UserController {
 
                     /** calculate:  total fee */
                     tuiSchedule.feePerHour = tutorFound.tutorData.hourlyRate
-                    console.log('type of feePerHour '+ typeof tuiSchedule.feePerHour)
-                    console.log('type of hourPerLession '+typeof tuiSchedule.hoursPerLession)
-                    console.log('type of lessionPerCourse '+typeof tuiSchedule.lessionsPerCourse)
+                    // console.log('type of feePerHour '+ typeof tuiSchedule.feePerHour)
+                    // console.log('type of hourPerLession '+typeof tuiSchedule.hoursPerLession)
+                    // console.log('type of lessionPerCourse '+typeof tuiSchedule.lessionsPerCourse)
                     tuiSchedule.feeTotal = tuiSchedule.feePerHour*tuiSchedule.hoursPerLession*tuiSchedule.lessionsPerCourse
                     
                     /** set senderId & tutorId */
@@ -349,15 +354,22 @@ class UserController {
 
                     /** set courseCode */
                     tuiSchedule.courseCode = req.body.academicLevel.slice(0,2) +'-' + req.decoded.username + '-' + tutorFound.username
-                    
-                    
-                    console.log(tuiSchedule)
+
+                    // console.log(tuiSchedule)                    
                     // return "OK"
                     return scheduleService.createNewSchedule(tuiSchedule)
                 }
             })
             .then(scheduleCreated => {
                 console.log(scheduleCreated)
+                /** auto create new sessions of this tuition schedule 
+                 * create new session from each day in session array of specified schedule
+                */
+                var sessionObj = {}
+                sessionObj.scheduleId = scheduleCreated._id
+                sessionObj.tutorId = scheduleCreated.tutorId
+                sessionObj.studentId = scheduleCreated.senderId
+                createSessions( scheduleCreated.sessions ,sessionObj)
                 res.status(200).json({success: true, scheduleCreated})
             })
             .catch(err => {
@@ -369,6 +381,21 @@ class UserController {
         function between(x, min, max) {
             if(x >= min && x <= max) return true
             else return false
+        }
+
+        function createSessions(sessionArray, session) {
+            for (const [i, date] of sessionArray.entries()) {
+                console.log(i + ' ' + date)
+                session.date = date;
+                session.nameOfSession = 'Session ' + (i+1)
+                sessionService
+                    .createSession(session)
+              }
+            // sessionArray.forEach(date => {
+            //     session.date = date
+            //     return sessionService
+            //         .createSession(session)
+            // });
         }
     
     }
@@ -384,10 +411,15 @@ class UserController {
     }
 
 
-    // getCalendar(req, res) {
-    //     userService
+    getCalendar(req, res) {
+        sessionService
+            .getCalendar(req.params.id)
+            .then(calendar => {
+                res.status(200).json({success: true, calendar})
+            })
+            .catch(err => res.status.json({success: false, message: 'Something went wrong!!!', err}))
 
-    // }
+    }
 
     
 }

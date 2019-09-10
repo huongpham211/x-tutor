@@ -8,6 +8,7 @@ class SessionService {
             .find(
                 {$or: [{tutorId: userId}, {senderId: userId}]}
             )
+            .populate('scheduleId', 'hourStart hourEnd courseCode')
     }
 
     //fetch all sessions of specified tuition schedule
@@ -16,6 +17,8 @@ class SessionService {
             .find({
                 scheduleId
             })
+            // .select('date')
+            .populate('scheduleId', 'hourStart hourEnd courseCode')
     }
 
     //fetch to specified session
@@ -26,6 +29,13 @@ class SessionService {
             )
     }
 
-    //
+    //create new session, this will used in pay of schedules controller
+    createSession(session){
+        return sessionModel
+            .create(session)
+    }
 }
+
+
+export default new SessionService()
 

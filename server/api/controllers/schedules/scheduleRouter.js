@@ -8,3 +8,4 @@ export default express
     .put('/:id', scheduleController.updateSchedule)
     .delete('/:id', scheduleController.deleteSchedule)
     .post('/:id/pay', scheduleController.paymentGate)
+    .get('/:id/sessions', scheduleController.getAllSessions)

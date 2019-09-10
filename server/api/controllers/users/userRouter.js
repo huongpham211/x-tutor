@@ -43,7 +43,7 @@ export default express
     .put('/:id', Auth.validateToken, UserController.updateInfoUser)
     .patch('/password', Auth.validateToken, UserController.updatePassword)
     // .get('/:id/avatar', UserController.getAvatar)
-    .patch('/:id/avatar',Auth.validateToken,  upload.single('avatar'), UserController.updateAvatar)
+    .patch('/:id/avatar', Auth.validateToken,  upload.single('avatar'), UserController.updateAvatar)
     .patch('/:id/tutor-intro', Auth.validateToken, UserController.updateTutorIntro)
     .patch('/:id/tutor-free-time', Auth.validateToken, UserController.updateTutorFreeTime)
     .patch('/:id/tutor-reference', Auth.validateToken, UserController.updateTutorRef)
@@ -51,3 +51,4 @@ export default express
     .patch('/:id/tutor-teaching-subject',Auth.validateToken, UserController.updateTutorCourse)
     .post('/:id/tuition-schedules', Auth.validateToken, UserController.createTuitionSchedule)
     .get('/:id/tuition-schedules', UserController.getAllSchedules)
+    .get('/:id/calendar', UserController.getCalendar)

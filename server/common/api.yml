@@ -15,7 +15,7 @@ tags:
     description: Users endpoints
   - name: Tuition Schedules
     description: i don't know how can i detail description of this
-  - name: Session
+  - name: Sessions
     description: tuition activity session
 
 consumes:

@@ -1,4 +1,5 @@
 import scheduleService from '../../services/scheduleService';
+import sessionService from '../../services/sessionService'
 import * as body from 'body-parser';
 
 
@@ -60,16 +61,28 @@ class ScheduleController {
         statusObj.paymentDate = Date.now();
         scheduleService
             .updateScheduleStatus(req.params.id, statusObj)
-            .then(statusUpdated => {
-                if(statusUpdated) res.status(200).json({status: statusUpdated, message: "Thank you!!!"})
+            .then(schUpdated => {
+                if(schUpdated) {
+                    return res.status(200).json({success: true, message: "Thanks for your donation!!!", sessionCreated})
+                }
                 else res.status(403).json({success: false, message: 'This tuition schedule not exist!!'})
             })
             .catch(err => {
                 console.log(err)
                 res.status(500).json({err, message: "something went wrong!!!"})
             })
+
+
     }
-}
+
+    getAllSessions(req,res) {
+        sessionService
+            .getAllSession(req.params.id)
+            .then(sessions =>{
+                res.status(200).json({success: true, sessions})
+            })
+    }
+} 
 
 
 export default new ScheduleController()
