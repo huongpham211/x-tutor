@@ -8,6 +8,7 @@ class SessionService {
             .find(
                 {$or: [{tutorId: userId}, {senderId: userId}]}
             )
+            .select('nameOfSession scheduleId studentId tutorId status date')
             .populate('scheduleId', 'hourStart hourEnd courseCode')
     }
 
