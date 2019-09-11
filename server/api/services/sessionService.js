@@ -6,7 +6,7 @@ class SessionService {
     getCalendar(userId){
         return sessionModel
             .find(
-                {$or: [{tutorId: userId}, {senderId: userId}]}
+                {$or: [{tutorId: userId}, {studentId: userId}]}
             )
             .select('nameOfSession scheduleId studentId tutorId status date')
             .populate('scheduleId', 'hourStart hourEnd courseCode')
