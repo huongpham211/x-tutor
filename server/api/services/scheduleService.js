@@ -22,6 +22,12 @@ class ScheduleService {
     }
 
 
+    updateSessionArray(id, value) {
+        return ScheduleModel
+            .findByIdAndUpdate(id, {$push: {'sessions': value}})
+    }
+
+
     updateSchedule(id, tuiSchedule){
         return ScheduleModel
             .findByIdAndUpdate(id, tuiSchedule, {new: true})

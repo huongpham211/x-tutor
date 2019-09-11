@@ -325,7 +325,7 @@ class UserController {
                      * push the date were matched with sender's preferDay into sessions array of tuition schedule Model
                      * the sessions array will be used in create sessions
                     */
-                    tuiSchedule.sessions = []
+                    tuiSchedule.sessionDate = []
                     for(var m = moment(tuiSchedule.periodeStart); m.isBefore(tuiSchedule.periodeEnd); m.add(1, 'days')) {
                         // console.log(m.format('YYYY-MM-DD'));
                         tuiSchedule.preferDay.forEach(day => {
@@ -333,13 +333,13 @@ class UserController {
                             if (m.format('dddd') == day) {
                                 // console.log(m.format('YYYY-MM-DD'))
                                 // console.log(day)
-                                tuiSchedule.sessions.push(m.format('YYYY-MM-DD'))
+                                tuiSchedule.sessionDate.push(m.format('YYYY-MM-DD'))
                             }
                         })
                     }
 
                     /** calculate lessionsPerCourse*/
-                    tuiSchedule.lessionsPerCourse = tuiSchedule.sessions.length
+                    tuiSchedule.lessionsPerCourse = tuiSchedule.sessionDate.length
 
                     /** calculate:  total fee */
                     tuiSchedule.feePerHour = tutorFound.tutorData.hourlyRate
@@ -369,7 +369,24 @@ class UserController {
                 sessionObj.scheduleId = scheduleCreated._id
                 sessionObj.tutorId = scheduleCreated.tutorId
                 sessionObj.studentId = scheduleCreated.senderId
-                createSessions( scheduleCreated.sessions ,sessionObj)
+
+                for (const [i, date] of scheduleCreated.sessionDate.entries()) {
+                    // console.log(i + ' ' + date)
+                    sessionObj.nameOfSession = 'Session ' + (i + 1);
+
+                    sessionObj.startDate = moment(date + ' ' + scheduleCreated.hourStart)
+                    sessionObj.endDate = moment(date + ' ' + scheduleCreated.hourEnd)
+                    console.log(sessionObj.startDate)
+                    console.log(sessionObj.endDate)
+
+                    sessionService
+                        .createSession(sessionObj)
+                        .then(session => {
+                            return scheduleService.updateSessionArray(scheduleCreated._id, session._id)
+                        })
+                }
+                                
+                // console.log('sessions ' + scheduleCreated.sessions)
                 res.status(200).json({success: true, scheduleCreated})
             })
             .catch(err => {
@@ -383,19 +400,17 @@ class UserController {
             else return false
         }
 
-        function createSessions(sessionArray, session) {
-            for (const [i, date] of sessionArray.entries()) {
+        function createSessions(sessionDate, session) {
+            for (const [i, date] of sessionDate.entries()) {
                 console.log(i + ' ' + date)
                 session.date = date;
-                session.nameOfSession = 'Session ' + (i+1)
+                session.nameOfSession = 'Session ' + (i + 1)
                 sessionService
                     .createSession(session)
-              }
-            // sessionArray.forEach(date => {
-            //     session.date = date
-            //     return sessionService
-            //         .createSession(session)
-            // });
+                    .then(session => {
+                        return session._id
+                    })
+            }
         }
     
     }

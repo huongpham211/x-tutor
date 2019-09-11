@@ -14,7 +14,8 @@ const sessionModel = new Schema({
     reportIssue: {type: String, enum: ['Late', 'Absent', 'Left early', 'Technical Dificultly', 'Others']},
     reportComment: {Type: String},
     isReported: {type: Boolean, default: 'false'},
-    date: {type: Date}
+    startDate: {type: Date},
+    endDate: {type: Date}
 })
 
 

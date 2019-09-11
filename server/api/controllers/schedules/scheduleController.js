@@ -44,7 +44,7 @@ class ScheduleController {
                 res.status(500).json({success: false, err})
             })
     }
-
+    
 
     deleteSchedule(req, res) {
         scheduleService

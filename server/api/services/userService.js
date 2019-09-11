@@ -85,17 +85,6 @@ class UserService {
     }
 
 
-    // updateFreeTime(id, periodeStart, periodeEnd, hourStart, hourEnd) {
-    //     return UserModel
-    //         .update(
-    //             {_id: id},
-    //             {$set: 
-    //                 {'tutorData.periodeStart': periodeStart,'tutorData.periodeEnd': periodeEnd, 'tutorData.hourStart': hourStart, 'tutorData.hourEnd': hourEnd}
-    //             },
-    //         )
-    // }
-
-
     updateTutorDataArray(tutorId, obj) {
         return UserModel
             .update(
