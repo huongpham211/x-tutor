@@ -585,7 +585,6 @@ paths:
           $ref: '#/responses/Unauthorized'
         404:
           $ref: '#/responses/NotFound'
-      
 
   /users/{id}/tutor-intro:
     patch:
@@ -1168,7 +1167,167 @@ paths:
           $ref: '#/responses/Unauthorized'
         404:
           $ref: '#/responses/NotFound'
-     
+
+  /sessions/{id}/rate:
+    patch:
+      tags:
+        - Sessions
+      summary: rate session
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: session Id
+        - in: header
+          name: authorization
+          required: true 
+          type: string
+          description: Bearer <token>
+        - in: body
+          name: rate
+          schema:
+            type: object
+            properties:
+              rateStar:
+                type: integer
+                enum: [1, 2, 3, 4, 5]
+                example: 5
+              rateComment:
+                type: string
+                example: 'Teacher is beautiful :))'
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: '#/responses/Unauthorized'
+        404:
+          $ref: '#/responses/NotFound'
+
+  /sessions/{id}/report:
+    patch:
+      tags:
+        - Sessions
+      summary: report session
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: session Id
+        - in: header
+          name: authorization
+          required: true 
+          type: string
+          description: Bearer <token>
+        - in: body
+          name: rate
+          schema:
+            type: object
+            properties:
+              reportIssue:
+                type: string
+                enum: ['Late', 'Absent', 'Left early', 'Technical Dificultly', 'Others']
+                example: Late
+              reportComment:
+                type: string
+                example: "She's beautiful, but she was late more than 15m."
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: '#/responses/Unauthorized'
+        404:
+          $ref: '#/responses/NotFound'
+  
+  /sessions/{id}/comment:
+    patch:
+      tags: 
+        - Sessions
+      summary: add new comment to sprcified session
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: session Id
+        - in: header
+          name: authorization
+          required: true 
+          type: string
+          description: Bearer <token>
+        - in: body
+          name: comment
+          type: string
+          decription: comment of session
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: '#/responses/Unauthorized'
+        404:
+          $ref: '#/responses/NotFound'
+  
+  /sessions/{id}/document:
+    patch:
+      tags:
+        - Sessions
+      summary: upload document file of specified session
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: session Id
+        - in: header
+          name: authorization
+          required: true
+          type: string
+          description: Bearer <token>
+        - in: formData
+          name: document
+          type: file
+          decription: file upload
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: '#/responses/Unauthorized'
+        404:
+          $ref: '#/responses/NotFound'
+
+  /session/{id}/status:
+    patch:
+      tags: 
+        - Sessions
+      summary: change status of specified session
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: session Id
+        - in: header
+          name: authorization
+          required: true
+          type: string
+          description: Bearer <token>
+        - in: body
+          name: status
+          type: string
+          required: false
+          description: update new status to specified session
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: '#/responses/Unauthorized'
+        404:
+          $ref: '#/responses/NotFound'
+
+
+
+
 
 # Descriptions of common responses
 responses:

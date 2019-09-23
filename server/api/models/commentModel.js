@@ -3,9 +3,8 @@ const Schema = mongoose.Schema;
 
 
 const CommentModel = new Schema({
-    comment: {type: Array},
-    senderId: {type: Schema.Types.ObjectId, ref: 'user'},
-    receiverId: {type: Schema.Types.ObjectId, ref: 'user'}
+    comment: {type: String},
+    username: {type: String}
 })
 
 

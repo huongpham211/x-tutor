@@ -385,7 +385,7 @@ class UserController {
                             return scheduleService.updateSessionArray(scheduleCreated._id, session._id)
                         })
                 }
-                                
+
                 // console.log('sessions ' + scheduleCreated.sessions)
                 res.status(200).json({success: true, scheduleCreated})
             })

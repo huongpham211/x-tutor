@@ -4,6 +4,7 @@ import authRouter from './api/controllers/auth/authRouter';
 import Auth from './api/middlewares/auth';
 import paymentRouter from './api/controllers/paymentCard/paymentRouter';
 import scheduleRouter from './api/controllers/schedules/scheduleRouter';
+import sessionRouter from './api/controllers/sessions/sessionRouter';
 import cors from 'cors';
 
 
@@ -11,8 +12,8 @@ export default function routes(app) {
   app.use(cors(function(req, cb) {
     // var whitelist = ['https://x-tutor.herokuapp.com','http://localhost:3001']
     const corsOptions = {
-      // origin: 'http://localhost:3000',
-        origin: 'https://x-tutor.herokuapp.com',
+      origin: 'http://localhost:3000',
+        // origin: 'https://x-tutor.herokuapp.com',
 
       method: "GET, PUT, POST, DELETE, PATCH, OPTIONS",
       credentials: true
@@ -38,5 +39,6 @@ export default function routes(app) {
   app.use('/api/v1/auth', authRouter);
   app.use('/api/v1/users', userRouter);
   app.use('/api/v1/cards', Auth.validateToken, paymentRouter);
-  app.use('/api/v1/schedules', Auth.validateToken, scheduleRouter)
+  app.use('/api/v1/schedules', Auth.validateToken, scheduleRouter);
+  app.use('/api/v1/sessions', Auth.validateToken, sessionRouter);
 }

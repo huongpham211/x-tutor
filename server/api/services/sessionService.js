@@ -35,6 +35,34 @@ class SessionService {
         return sessionModel
             .create(session)
     }
+
+    
+    comment(id, comment) {
+        return sessionModel
+            .findOneAndUpdate(
+                {_id: id},
+                {$push: {commments: comment}}
+            )
+    }
+
+    //rate specified session
+    rate(id, rate) {
+        return sessionModel
+            .findOneAndUpdate(
+                {_id: id},
+                {$set: rate},
+                {new: true}
+            )
+    }
+
+    //report specified session
+    report(id, report) {
+        return sessionModel
+            .findOneAndUpdate(
+                {_id: id},
+                {$set: report},
+            )
+    }
 }
 
 

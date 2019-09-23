@@ -53,7 +53,7 @@ class ScheduleController {
             .catch(err => res.status(500).json({success: false, err}))
     }
 
-
+    //this isn't a real paymentGate, just demo
     paymentGate(req, res) {
         const statusObj = {};
         statusObj.paymentStatus = 'Completed';
@@ -63,7 +63,7 @@ class ScheduleController {
             .updateScheduleStatus(req.params.id, statusObj)
             .then(schUpdated => {
                 if(schUpdated) {
-                    return res.status(200).json({success: true, message: "Thanks for your donation!!!", sessionCreated})
+                    return res.status(200).json({success: true, message: "Thanks for your donation!!!", schUpdated})
                 }
                 else res.status(403).json({success: false, message: 'This tuition schedule not exist!!'})
             })
