@@ -1258,8 +1258,12 @@ paths:
           description: Bearer <token>
         - in: body
           name: comment
-          type: string
-          decription: comment of session
+          schema:
+            type: object
+            properties:
+              comment:
+                type: string
+                example: "Something..."
       responses:
         200:
           description: OK
@@ -1296,7 +1300,7 @@ paths:
         404:
           $ref: '#/responses/NotFound'
 
-  /session/{id}/status:
+  /sessions/{id}/status:
     patch:
       tags: 
         - Sessions
@@ -1314,7 +1318,13 @@ paths:
           description: Bearer <token>
         - in: body
           name: status
-          type: string
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: ['Not Started', 'Completed', 'Cancelled', 'Deferred']
+                example: 'Cancelled'
           required: false
           description: update new status to specified session
       responses:

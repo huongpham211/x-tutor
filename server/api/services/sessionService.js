@@ -28,6 +28,15 @@ class SessionService {
             .findOne(
                 {_id: id}
             )
+            .populate({
+                path: 'comments',
+                model: 'comment',
+                populate: {
+                    path: 'owner',
+                    model: 'user',
+                    select: 'username'
+                }
+            })
     }
 
     //create new session, this will used in pay of schedules controller
@@ -36,12 +45,14 @@ class SessionService {
             .create(session)
     }
 
-    
-    comment(id, comment) {
+
+    //push comment to comments array in specified session
+    comment(id, commentId){
         return sessionModel
             .findOneAndUpdate(
                 {_id: id},
-                {$push: {commments: comment}}
+                {$push: {comments: commentId}},
+                {new: true}
             )
     }
 
@@ -61,6 +72,25 @@ class SessionService {
             .findOneAndUpdate(
                 {_id: id},
                 {$set: report},
+            )
+    }
+
+    //change status of specified session
+    status(id, status) {
+        return sessionModel
+            .findOneAndUpdate(
+                {_id: id},
+                {$set: status},
+                {new: true}
+            )
+    }
+
+    updateDocumentPath(id, path) {
+        return sessionModel
+            .findOneAndUpdate(
+                {_id: id},
+                {$push: {documents: path}},
+                {new: true}
             )
     }
 }

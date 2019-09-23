@@ -1,4 +1,5 @@
 import sessionService from '../../services/sessionService';
+import commentService from '../../services/commentService';
 import * as body from 'body-parser';
 
 
@@ -15,15 +16,18 @@ class SessionController {
 
 
     comment(req, res) {
-        sessionService
-            .comment(req.params.id, req.params.body)
+        var comment = req.body
+        comment.owner = req.decoded.ownerId
+        console.log(comment)
+        commentService
+            .createComment(comment)
+            .then(comment => {
+                return sessionService.comment(req.params.id,comment._id)
+            })
             .then(updated => {
                 res.status(200).json({success: true, updated})
             })
-            .catch(err => {
-                console.log(err)
-                res.status(500).json({success: false, message: 'Something went wrong!!'})
-            })
+            .catch(err => res.status(500).json({success: false, message: 'Something went wrong!'}))
     }
 
     uploadDocument(req, res) {
@@ -60,6 +64,18 @@ class SessionController {
     }
 
     
+    updateStatus(req, res) {
+        sessionService
+            .status(req.params.id, req.body)
+            .then(updated => {
+                if(!updated) res.status(403).json({success: false, message: 'This session is not exist'})
+                else res.status(200).json({success: true, updated})
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(500).json({success: false, message: 'Something went wrong'})
+            })
+    }
 
 }
 

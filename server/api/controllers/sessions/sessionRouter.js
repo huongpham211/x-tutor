@@ -25,7 +25,7 @@ const upload = multer({
 export default express
     .Router()
     .get('/:id', sessionController.getSessionById)
-    // .delete('/:id', sessionController)
     .patch('/:id/rate', sessionController.rateSession)
     .patch('/:id/report', sessionController.rateSession)
-    .patch('/:id/')
+    .patch('/:id/comment', sessionController.comment)
+    .patch('/:id/status', sessionController.updateStatus)
