@@ -31,7 +31,22 @@ class SessionController {
     }
 
     uploadDocument(req, res) {
-        
+        console.log(req.headers)
+        console.log(req.file)
+        if(req.file) {
+            try{
+                const path = `/documents/${req.file.filename}`
+                sessionService
+                    .updateDocumentPath(req.params.id, path)
+                    .then(updated => {
+                        return res.status(200).json({updated, path})
+                    })
+            } catch(err) {
+                return res.status(500).json({err})
+            }
+        } else {
+            return res.status(403).json({success: false, message: 'No file selected!!'})
+        }
     }
 
 

@@ -14,7 +14,7 @@ class UserService {
             .find({
                 rolesId: 'Tutor'
             })
-            .select('username profilePicture firstName lastName tutorData')
+            .select('username avatar firstName lastName tutorData')
     }
     
 

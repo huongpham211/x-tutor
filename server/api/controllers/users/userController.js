@@ -430,10 +430,10 @@ class UserController {
         sessionService
             .getCalendar(req.params.id)
             .then(calendar => {
+                // console.log('calendar' + calendar)
                 res.status(200).json({success: true, calendar})
             })
-            .catch(err => res.status.json({success: false, message: 'Something went wrong!!!', err}))
-
+            .catch(err => res.status(500).json({success: false, message: 'Something went wrong!!!', err}))
     }
 
     
