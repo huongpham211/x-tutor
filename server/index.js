@@ -10,7 +10,7 @@ mongoose.connect(dbUrl,
     {
       useNewUrlParser: true,
       useCreateIndex: true,
-      // useFindAndModify: false
+      useFindAndModify: false
     },
     function(err){
       if(err) console.log(err);

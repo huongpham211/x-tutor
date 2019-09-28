@@ -7,6 +7,7 @@ import * as path from 'path';
 import * as bcrypt from 'bcryptjs';
 import moment from 'moment';
 import { deflateSync } from 'zlib';
+import { S_IFBLK } from 'constants';
 
 
 class UserController {
@@ -313,39 +314,44 @@ class UserController {
                 //console.log('dS ' + dS)
                 //console.log('dE ' + dE)
 
+                /** calculate: période 
+                 * push the date were matched with sender's preferDay into sessions array of tuition schedule Model
+                 * the sessions array will be used in create sessions
+                */
+                tuiSchedule.sessionDate = []
+                for(var m = moment(tuiSchedule.periodeStart); m.isBefore(tuiSchedule.periodeEnd); m.add(1, 'days')) {
+                    // console.log(m.format('YYYY-MM-DD'));
+                    tuiSchedule.preferDay.forEach(day => {
+                        // console.log(day)
+                        if (m.format('dddd') == day) {
+                            // console.log(m.format('YYYY-MM-DD'))
+                            // console.log(day)
+                            tuiSchedule.sessionDate.push(m.format('YYYY-MM-DD'))
+                        }
+                    })
+                }
+
                 //compare student's prefer time - tutor's free time
                 if(!moment(dS).isBetween(start, end, null, '[]') && !moment(dE).isBetween(start, end, null, '[]')) {
-                    res.status(403).json({success: false, message: "Pick start and end date between tutor's free time"})
-                } else if (!between(tuiSchedule.hourStart, hStart, hEnd) || !(tuiSchedule.hourEnd, hStart, hEnd)){
-                    res.status(403).json({success: false, message: "Pick start and end hours between tutor's free time"})
-                } else {
+                    res.status(403).json({success: false, message: 'Pick start and end date between tutor\'s free time'})
+                } else if (!between(tuiSchedule.hourStart, hStart, hEnd, '[]') || !(tuiSchedule.hourEnd, hStart, hEnd, '[]')){
+                    res.status(403).json({success: false, message: 'Pick start and end hours between tutor\'s free time'})
+                } 
+                // else if(isEmpty(tuiSchedule, req.decoded.ownerId, req.params.id) == false) {
+                //     res.status(403).json({success: false, message: 'The period you was booked is not empty in your schedule or the tutor\'s schedule'})
+                // } 
+                else {
                     /** change time zone*/
-
-                    /** calculate: période 
-                     * push the date were matched with sender's preferDay into sessions array of tuition schedule Model
-                     * the sessions array will be used in create sessions
-                    */
-                    tuiSchedule.sessionDate = []
-                    for(var m = moment(tuiSchedule.periodeStart); m.isBefore(tuiSchedule.periodeEnd); m.add(1, 'days')) {
-                        // console.log(m.format('YYYY-MM-DD'));
-                        tuiSchedule.preferDay.forEach(day => {
-                            // console.log(day)
-                            if (m.format('dddd') == day) {
-                                // console.log(m.format('YYYY-MM-DD'))
-                                // console.log(day)
-                                tuiSchedule.sessionDate.push(m.format('YYYY-MM-DD'))
-                            }
-                        })
-                    }
 
                     /** calculate lessionsPerCourse*/
                     tuiSchedule.lessionsPerCourse = tuiSchedule.sessionDate.length
 
                     /** calculate:  total fee */
                     tuiSchedule.feePerHour = tutorFound.tutorData.hourlyRate
-                    // console.log('type of feePerHour '+ typeof tuiSchedule.feePerHour)
-                    // console.log('type of hourPerLession '+typeof tuiSchedule.hoursPerLession)
-                    // console.log('type of lessionPerCourse '+typeof tuiSchedule.lessionsPerCourse)
+                    console.log('tutorFound' + tutorFound)
+                    console.log('type of feePerHour '+ typeof tuiSchedule.feePerHour)
+                    console.log('type of hourPerLession '+typeof tuiSchedule.hoursPerLession)
+                    console.log('type of lessionPerCourse '+typeof tuiSchedule.lessionsPerCourse)
                     tuiSchedule.feeTotal = tuiSchedule.feePerHour*tuiSchedule.hoursPerLession*tuiSchedule.lessionsPerCourse
                     
                     /** set senderId & tutorId */
@@ -355,39 +361,41 @@ class UserController {
                     /** set courseCode */
                     tuiSchedule.courseCode = req.body.academicLevel.slice(0,2) +'-' + req.decoded.username + '-' + tutorFound.username
 
-                    // console.log(tuiSchedule)                    
+                    console.log(tuiSchedule)                
                     // return "OK"
                     return scheduleService.createNewSchedule(tuiSchedule)
                 }
             })
             .then(scheduleCreated => {
-                console.log(scheduleCreated)
-                /** auto create new sessions of this tuition schedule 
-                 * create new session from each day in session array of specified schedule
-                */
-                var sessionObj = {}
-                sessionObj.scheduleId = scheduleCreated._id
-                sessionObj.tutorId = scheduleCreated.tutorId
-                sessionObj.studentId = scheduleCreated.senderId
+                if(scheduleCreated) {
+                    console.log(scheduleCreated)
+                    /** auto create new sessions of this tuition schedule 
+                     * create new session from each day in session array of specified schedule
+                    */
+                    var sessionObj = {}
+                    sessionObj.scheduleId = scheduleCreated._id
+                    sessionObj.tutorId = scheduleCreated.tutorId
+                    sessionObj.studentId = scheduleCreated.senderId
+    
+                    for (const [i, date] of scheduleCreated.sessionDate.entries()) {
+                        // console.log(i + ' ' + date)
+                        sessionObj.nameOfSession = 'Session ' + (i + 1);
+    
+                        sessionObj.startDate = moment(date + ' ' + scheduleCreated.hourStart)
+                        sessionObj.endDate = moment(date + ' ' + scheduleCreated.hourEnd)
+                        console.log(sessionObj.startDate)
+                        console.log(sessionObj.endDate)
 
-                for (const [i, date] of scheduleCreated.sessionDate.entries()) {
-                    // console.log(i + ' ' + date)
-                    sessionObj.nameOfSession = 'Session ' + (i + 1);
-
-                    sessionObj.startDate = moment(date + ' ' + scheduleCreated.hourStart)
-                    sessionObj.endDate = moment(date + ' ' + scheduleCreated.hourEnd)
-                    console.log(sessionObj.startDate)
-                    console.log(sessionObj.endDate)
-
-                    sessionService
-                        .createSession(sessionObj)
-                        .then(session => {
-                            return scheduleService.updateSessionArray(scheduleCreated._id, session._id)
-                        })
-                }
-
-                // console.log('sessions ' + scheduleCreated.sessions)
-                res.status(200).json({success: true, scheduleCreated})
+                        sessionService
+                            .createSession(sessionObj)
+                            .then(session => {
+                                return scheduleService.updateSessionArray(scheduleCreated._id, session._id)
+                            })
+                    }
+    
+                    // console.log('sessions ' + scheduleCreated.sessions)
+                    res.status(200).json({success: true, scheduleCreated})
+                }               
             })
             .catch(err => {
                 console.log(err)
@@ -395,22 +403,78 @@ class UserController {
             })
         
         //small method
-        function between(x, min, max) {
-            if(x >= min && x <= max) return true
-            else return false
+        function between(x, min, max, brackets) {
+            if(brackets == '[]') {
+                if(x >= min && x <= max) return true;
+                else return false;
+            }
+            else if(brackets == '()') {
+                if(x > min && x < max) return true;
+                else return false;
+            }
         }
 
-        function createSessions(sessionDate, session) {
-            for (const [i, date] of sessionDate.entries()) {
-                console.log(i + ' ' + date)
-                session.date = date;
-                session.nameOfSession = 'Session ' + (i + 1)
-                sessionService
-                    .createSession(session)
-                    .then(session => {
-                        return session._id
+        // function createSessions(sessionDate, session) {
+        //     for (const [i, date] of sessionDate.entries()) {
+        //         console.log(i + ' ' + date)
+        //         session.date = date;
+        //         session.nameOfSession = 'Session ' + (i + 1)
+        //         sessionService
+        //             .createSession(session)
+        //             .then(session => {
+        //                 return session._id
+        //             })
+        //     }
+        // }
+
+        function isEmpty(tuitionSchedule, ownerId, tutorId){
+            scheduleService
+                .getAllSchedule(tutorId)
+                .then(allTutorschedules => {
+                    allTutorschedules.forEach(schedule => {
+                        console.log(schedule.sessionDate)
+                        schedule.sessionDate.forEach(date => {
+                            for(var tDate in tuitionSchedule.sessionDate) {
+                                if(tDate == date) {
+                                    console.log('tDate' + tDate)
+                                    console.log('date' + date)
+                                    console.log('tuiStart' + tuitionSchedule.hourStart)
+                                    console.log('schedule.hourstart' + schedule.hourStart)
+                                    console.log('schedule.hourEnd' + schedule.hourEnd)
+                                    if(between(tuitionSchedule.hourStart, schedule.hourStart, schedule.hourEnd, '()')){
+                                        return false
+                                    }
+                                } else {
+                                    return true
+                                    // return tuitionSchedule.sessionDate
+                                }
+                            }
+                        })
                     })
-            }
+                })
+                // .then(sessionDate => {
+                //     scheduleService
+                //         .getAllSchedule(ownerId)
+                //         .then(allOwnerSchedules => {
+                //             allOwnerSchedules.forEach(schedule => {
+                //                 schedule.sessionDate.forEach(date => {
+                //                     for(var tDate in sessionDate) {
+                //                         if(tDate == date) {  
+                //                         console.log('tDate' + tDate)
+                //                         console.log('date' + date)
+                //                         console.log('tuiStart' + tuitionSchedule.hourStart)
+                //                         console.log('schedule.hourstart' + schedule.hourStart)
+                //                         console.log('schedule.hourEnd' + schedule.hourEnd)
+                //                             if(between(tuitionSchedule.hourStart, schedule.hourStart, schedule.hourEnd, '()')){
+                //                                 return fasle
+                //                             }
+                //                         } else return true
+                //                     }
+                //                 })
+                //             })
+                //         })
+
+                // })
         }
     
     }
